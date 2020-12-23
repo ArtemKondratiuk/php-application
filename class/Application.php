@@ -71,6 +71,43 @@ class Application extends Config {
 
         $errors = [];                                  //Отсутствие ошибок
 
+        $name = $data[0]['value'];
+        $phone = $data[1]['value'];
+        $email = $data[2]['value'];
+        $comment = $data[3]['value'];
+
+        if (!$name) {
+            $errors['name'] = 'name is missing';
+        }
+
+        if (preg_match("~[0-9]~", $name)) {
+            $errors['name'] = 'name is contain number';
+        }
+
+        if (strlen($name) > 64) {
+            $errors['name'] = 'name can have max 64 chars';
+        }
+
+        if (!$phone) {
+            $errors['phone'] = 'phone is missing';
+        }
+
+        if (!preg_match("/^\+[0-9]{3}\((\d+)\)\d{3}-\d{2}-\d{2}/", $phone)) {
+            $errors['phone'] = 'incorrect phone';
+        }
+
+        if ($email && $email !== filter_var($data[2]['value'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'must be null or correct email';
+        }
+
+        if ($comment !== strip_tags($data[3]['value'])) {
+            $errors['comment'] = 'do not use tags';
+        }
+
+        if (strlen($comment) > 1024) {
+            $errors['comment'] = 'comment can have max 1024 chars';
+        }
+
         return ['result' => count($errors) === 0, 'error' => $errors];
     }
 
